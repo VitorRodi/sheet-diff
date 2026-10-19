@@ -1,3 +1,4 @@
+import {createComparisonWorkbook} from './export.mjs';
 import {compare,headers,parseCSV,value} from './core.mjs';
 const $=id=>document.getElementById(id);
 const state={books:[null,null],data:[null,null],names:['',''],result:null,filter:'all',page:0};
@@ -93,13 +94,7 @@ function render(){
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.filter=b.dataset.filter;state.page=0;render();}));$('search').addEventListener('input',()=>{state.page=0;render();});$('prev').addEventListener('click',()=>{state.page--;render();});$('next').addEventListener('click',()=>{state.page++;render();});
 function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 $('export').addEventListener('click',async()=>{
- try{const wb=new ExcelJS.Workbook(),s=wb.addWorksheet('Comparison');
-  s.addRow(['Status','Identifier','Column','Original value','Updated value']);
-  state.result.rows.filter(r=>r.status!=='unchanged').forEach(r=>{
-   const cols=r.changes.length?r.changes:state.result.columns;
-   cols.forEach(c=>s.addRow([r.status,r.key,c,r.before?.[c]??'',r.after?.[c]??'']));
-  });
-  s.getRow(1).font={bold:true,color:{argb:'FFFFFFFF'}};s.getRow(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2A2A2A'}};s.columns.forEach((c,i)=>c.width=i<2?20:32);s.views=[{state:'frozen',ySplit:1}];s.autoFilter='A1:E1';
+ try{const wb=createComparisonWorkbook(ExcelJS,state.result);
   download(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'sheet-diff-comparison.xlsx');
  }catch(e){note('The report could not be exported. '+e.message);}
 });

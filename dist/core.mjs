@@ -15,7 +15,7 @@ export function compare(before,after,key){
    const id=value(cells[h.indexOf(key)]).trim();
    if(!id)throw new Error(`${label}: empty identifier on row ${i+2}. Fill it in or choose another column.`);
    if(m.has(id))throw new Error(`${label}: duplicate identifier "${id}" on row ${i+2}. Each record needs a unique identifier.`);
-   m.set(id,Object.fromEntries(h.map((c,j)=>[c,value(cells[j])])));
+   m.set(id,Object.assign(Object.create(null),Object.fromEntries(h.map((c,j)=>[c,value(cells[j])]))));
   });return m;
  };
  const b=index(before,bh,'Original file'),a=index(after,ah,'Updated file');
