@@ -34,3 +34,8 @@ test('treats inherited property names as actual schema changes',()=>{
  const special=compare([['ID','__proto__'],['1','safe']],[['ID','__proto__'],['1','changed']],'ID');
  assert.deepEqual(special.rows[0].changes,['__proto__']);
 });
+
+test('rejects malformed quotes instead of silently changing CSV data',()=>{
+ assert.throws(()=>parseCSV('ID,Name\n1,"Coat"extra'),/quoted|quote/i);
+ assert.throws(()=>parseCSV('ID,Name\n1,Co"at'),/quoted|quote/i);
+});

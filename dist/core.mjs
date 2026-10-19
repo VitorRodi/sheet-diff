@@ -34,12 +34,18 @@ export function parseCSV(text){
   else if(!inQuotes){if(c==='\n'||c==='\r')break;if(c in counts)counts[c]++;}
  }
  const delimiter=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
- const rows=[];let row=[],cell='',quoted=false;
+ const rows=[];let row=[],cell='',quoted=false,closed=false;
  for(let i=0;i<text.length;i++){
   const c=text[i];
-  if(c==='"'){if(quoted&&text[i+1]==='"'){cell+='"';i++;}else if(quoted||!cell)quoted=!quoted;else cell+=c;}
-  else if(c===delimiter&&!quoted){row.push(cell);cell='';}
-  else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x!==''))rows.push(row);row=[];cell='';}
+  if(closed&&c!==delimiter&&c!=='\n'&&c!=='\r')throw new Error('Unexpected text after a closing CSV quote. Check quoted fields.');
+  if(c==='"'){
+   if(quoted&&text[i+1]==='"'){cell+='"';i++;}
+   else if(quoted){quoted=false;closed=true;}
+   else if(!cell){quoted=true;}
+   else throw new Error('A CSV quote must start at the beginning of a field. Quote the whole field.');
+  }
+  else if(c===delimiter&&!quoted){row.push(cell);cell='';closed=false;}
+  else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x!==''))rows.push(row);row=[];cell='';closed=false;}
   else cell+=c;
  }
  if(quoted)throw new Error('A quoted CSV field is not closed. Check the file and try again.');
