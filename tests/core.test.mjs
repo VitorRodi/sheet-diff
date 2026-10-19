@@ -39,3 +39,20 @@ test('rejects malformed quotes instead of silently changing CSV data',()=>{
  assert.throws(()=>parseCSV('ID,Name\n1,"Coat"extra'),/quoted|quote/i);
  assert.throws(()=>parseCSV('ID,Name\n1,Co"at'),/quoted|quote/i);
 });
+
+test('preserves leading zeros, case and whitespace in values and normalizes key edges only',()=>{
+ const r=compare([['ID','Value'],[' 001 ',' x '],['002','A']],[['ID','Value'],['001','x'],['002','a']],'ID');
+ assert.equal(r.rows.length,2);
+ assert.equal(r.rows[0].key,'001');
+ assert.equal(r.rows[0].before.Value,' x ');
+ assert.deepEqual(r.rows.map(r=>r.status),['changed','changed']);
+ assert.throws(()=>compare([['ID'],['001'],[' 001 ']],[['ID'],['001']],'ID'),/duplicate/i);
+});
+
+test('normalizes dates and does not mutate input arrays',()=>{
+ const before=[['ID','Date'],['1',new Date('2026-01-01T00:00:00Z')]];
+ const after=[['Date','ID'],['2026-01-01T00:00:00.000Z','1']];
+ const snapshot=structuredClone({before,after});
+ assert.equal(compare(before,after,'ID').rows[0].status,'unchanged');
+ assert.deepEqual({before,after},snapshot);
+});
