@@ -36,13 +36,15 @@ npm ci
 npm test
 ```
 
-Generate sample Excel files and an invalid-key CSV fixture:
+Generate sample Excel and CSV files, plus an invalid-key CSV fixture:
 
 ```sh
 node fixtures.mjs
 ```
 
-The files are written to `examples/`. Compare `original.xlsx` with `updated.xlsx` using **SKU**, export the results, then optionally verify that export:
+The files are written to `examples/`. Try `original.csv` and `updated.csv` directly, or compare `original.xlsx` with `updated.xlsx`. Select **SKU**. Both pairs produce one changed, one unchanged, one removed and one added record, despite reordered columns and rows.
+
+Export the Excel comparison, then optionally verify that report:
 
 ```sh
 node verify-export.mjs /path/to/sheet-diff-comparison.xlsx
@@ -65,6 +67,7 @@ dist/                 Static application, ready to serve
   core.mjs            CSV parsing and record comparison
   app.mjs             File loading, results, search and Excel export
   design.mjs          Interactive preview and demo controls
+  export.mjs          Tested Excel report generation
   vendor/             ExcelJS and local Inter fonts, with licenses
 tests/                Node.js comparison and CSV tests
 examples/             Generated sample files
