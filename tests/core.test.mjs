@@ -27,3 +27,10 @@ test('rejects empty and sparse header rows',()=>{
  assert.throws(()=>headers([[]]),/headers/i);
  assert.throws(()=>headers([[,'Name']]),/headers/i);
 });
+
+test('treats inherited property names as actual schema changes',()=>{
+ const r=compare([['ID','toString'],['1','old']],[['ID','constructor'],['1','new']],'ID');
+ assert.deepEqual(r.rows[0].changes,['toString','constructor']);
+ const special=compare([['ID','__proto__'],['1','safe']],[['ID','__proto__'],['1','changed']],'ID');
+ assert.deepEqual(special.rows[0].changes,['__proto__']);
+});
