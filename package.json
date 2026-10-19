@@ -1,1 +1,28 @@
-{"name":"sheet-diff","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs"},"dependencies":{"exceljs":"4.4.0"}}
+{
+  "name": "sheet-diff",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "exceljs": "4.4.0"
+  },
+  "version": "0.1.0",
+  "description": "Compare Excel and CSV files locally in your browser.",
+  "license": "MIT",
+  "author": "Vitor Rodi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitorRodi/sheet-diff.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VitorRodi/sheet-diff/issues"
+  },
+  "keywords": [
+    "excel",
+    "csv",
+    "spreadsheet",
+    "comparison",
+    "browser"
+  ]
+}
