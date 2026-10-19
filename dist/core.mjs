@@ -1,8 +1,8 @@
 export const value = v => v == null ? '' : v instanceof Date ? v.toISOString() : String(v);
 export function headers(data){
  if(!data.length) throw new Error('This sheet is empty. Choose a sheet with a header row and records.');
- const h=data[0].map(x=>value(x).trim());
- if(h.some(x=>!x)||new Set(h).size!==h.length) throw new Error('Column headers must be unique and cannot be empty.');
+ const h=Array.from(data[0],x=>value(x).trim());
+ if(!h.length||h.some(x=>!x)||new Set(h).size!==h.length) throw new Error('Column headers must be unique and cannot be empty.');
  return h;
 }
 export function compare(before,after,key){

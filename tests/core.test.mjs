@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {compare,parseCSV} from '../dist/core.mjs';
+import {compare,parseCSV,headers} from '../dist/core.mjs';
 test('ignores delimiter characters inside quoted CSV headers',()=>{
  assert.deepEqual(parseCSV('"Name, description, notes";ID\n"Shirt, blue";001'),[['Name, description, notes','ID'],['Shirt, blue','001']]);
 });
@@ -21,4 +21,9 @@ test('reports schema changes and preserves meaningful differences',()=>{
  const r=compare([['ID','Value','Old'],['001',' x ',3]],[['ID','Value','New'],['001','x',7]],'ID');
  assert.equal(r.rows[0].status,'changed');assert.deepEqual(r.addedColumns,['New']);assert.deepEqual(r.removedColumns,['Old']);
  assert.ok(r.rows[0].changes.includes('Value'));
+});
+
+test('rejects empty and sparse header rows',()=>{
+ assert.throws(()=>headers([[]]),/headers/i);
+ assert.throws(()=>headers([[,'Name']]),/headers/i);
 });
