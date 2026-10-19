@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible problem with Sheet Diff.
+body:
+  - type: markdown
+    attributes:
+      value: Use synthetic spreadsheet data. Do not attach customer files, credentials or personal information.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the selected identifier, worksheet and file format.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the visible error message and a minimal synthetic example if possible.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and operating system
+      placeholder: Chrome 148 on Windows 11
+    validations:
+      required: true

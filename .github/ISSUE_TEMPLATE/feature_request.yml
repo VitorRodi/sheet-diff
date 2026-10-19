@@ -1,0 +1,17 @@
+name: Feature request
+description: Suggest an improvement grounded in a spreadsheet comparison task.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What task are you trying to complete?
+      description: Describe the problem and your current workaround. Use synthetic examples.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain how this would help while keeping spreadsheet processing local to the browser.
+    validations:
+      required: true
