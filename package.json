@@ -2,7 +2,10 @@
   "name": "sheet-diff",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check dist/app.mjs && node --check dist/core.mjs && node --check dist/design.mjs && node --check dist/export.mjs",
+    "test:watch": "node --test --watch tests/*.test.mjs",
+    "examples": "node fixtures.mjs"
   },
   "dependencies": {
     "exceljs": "4.4.0"
@@ -24,5 +27,8 @@
     "spreadsheet",
     "comparison",
     "browser"
-  ]
+  ],
+  "engines": {
+    "node": ">=22"
+  }
 }

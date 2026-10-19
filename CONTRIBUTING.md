@@ -1,6 +1,8 @@
 # Contributing to Sheet Diff
 
-Use Node.js 22 or newer and run `npm ci` followed by `npm test`.
+Use Node.js 22 or newer and run `npm ci`, `npm run check` and `npm test`.
+
+Use `npm run test:watch` while changing the comparison logic. `npm run examples` regenerates the synthetic sample files.
 
 Serve `dist/` with a static HTTP server, as described in the README. There is no build step. Keep the application usable without a backend or runtime CDN dependencies.
 
