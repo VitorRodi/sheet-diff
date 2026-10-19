@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {compare,parseCSV} from '../dist/core.mjs';
+test('ignores delimiter characters inside quoted CSV headers',()=>{
+ assert.deepEqual(parseCSV('"Name, description, notes";ID\n"Shirt, blue";001'),[['Name, description, notes','ID'],['Shirt, blue','001']]);
+});
 test('reads quoted delimiters, escaped quotes, multiline CSV and UTF-8 BOM',()=>{
  assert.deepEqual(parseCSV('\uFEFFID;Text\r\n1;"a;b"\r\n2;"hello\n""world"""'),[['ID','Text'],['1','a;b'],['2','hello\n"world"']]);
  assert.throws(()=>parseCSV('ID,Text\n1,"oops'),/not closed/);

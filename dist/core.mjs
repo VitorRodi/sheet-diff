@@ -27,8 +27,13 @@ export function compare(before,after,key){
 }
 export function parseCSV(text){
  text=text.replace(/^\uFEFF/,'');
- const line=text.split(/\r?\n/)[0]||'';
- const delimiter=[',',';','\t'].sort((a,b)=>line.split(b).length-line.split(a).length)[0];
+ const counts={',':0,';':0,'\t':0};let inQuotes=false;
+ for(let i=0;i<text.length;i++){
+  const c=text[i];
+  if(c==='"'){if(inQuotes&&text[i+1]==='"')i++;else inQuotes=!inQuotes;}
+  else if(!inQuotes){if(c==='\n'||c==='\r')break;if(c in counts)counts[c]++;}
+ }
+ const delimiter=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
  const rows=[];let row=[],cell='',quoted=false;
  for(let i=0;i<text.length;i++){
   const c=text[i];

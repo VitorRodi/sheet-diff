@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs';
 import fs from 'node:fs/promises';
-const dir='../../outputs/sheet-diff';
+const dir=process.argv[2]||'examples';
+await fs.mkdir(dir,{recursive:true});
 for(const [name,rows] of [['original',[['SKU','Product','Stock'],['A01','Shirt',10],['A02','Coat',5],['A03','Socks',4]]],['updated',[['Stock','SKU','Product'],[5,'A02','Coat'],[8,'A01','Shirt'],[3,'A04','Hat']]]]){
 const w=new ExcelJS.Workbook();w.addWorksheet('Inventory').addRows(rows);w.addWorksheet('Second sheet').addRows([['ID','Name'],['1','Demo']]);await w.xlsx.writeFile(`${dir}/${name}.xlsx`);
 }

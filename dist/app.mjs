@@ -1,6 +1,6 @@
 import {compare,headers,parseCSV,value} from './core.mjs';
 const $=id=>document.getElementById(id);
-const state={books:[null,null],data:[null,null],result:null,filter:'all',page:0};
+const state={books:[null,null],data:[null,null],names:['',''],result:null,filter:'all',page:0};
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function note(s){$('notice').textContent=s;}
 function invalidate(){state.result=null;$('results').hidden=true;}
@@ -40,7 +40,7 @@ function worksheetRows(sheet){
 }
 const uploads=[0,0];
 async function loadFile(i,file){
- if(!file)return;const token=++uploads[i];
+ if(!file)return;const token=++uploads[i];state.names[i]=file.name;
  state.books[i]=null;state.data[i]=null;$('sf'+i).hidden=true;$('name'+i).textContent='Reading file…';sync();
  try{
   if(file.size>5*1024*1024)throw new Error('File exceeds 5 MB. Choose a smaller file.');
@@ -62,14 +62,14 @@ async function loadFile(i,file){
 }
 for(let i=0;i<2;i++){
  $('file'+i).addEventListener('change',e=>loadFile(i,e.target.files[0]));
- $('sheet'+i).addEventListener('change',()=>{try{state.data[i]=worksheetRows(state.books[i].getWorksheet(Number($('sheet'+i).value)));sync();}catch(e){state.data[i]=null;sync();note(e.message);}});
+ $('sheet'+i).addEventListener('change',()=>{try{state.data[i]=worksheetRows(state.books[i].getWorksheet(Number($('sheet'+i).value)));$('name'+i).textContent=`${state.names[i]} · ${state.data[i].length-1} records`;sync();}catch(e){state.data[i]=null;$('name'+i).textContent=state.names[i];sync();note(e.message);}});
  const drop=$('drop'+i);drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag');loadFile(i,e.dataTransfer.files[0]);});
 }
 $('key').addEventListener('change',invalidate);
 function run(){
  try{state.result=compare(...state.data,$('key').value);state.page=0;state.filter='all';$('search').value='';note('');$('results').hidden=false;
   const counts={changed:0,added:0,removed:0,unchanged:0};state.result.rows.forEach(r=>counts[r.status]++);
-  $('summary').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="stat ${k}"><strong>${v}</strong><span>${k[0].toUpperCase()+k.slice(1)} records</span></div>`).join('');
+  $('summary').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="stat ${k}"><strong>${v}</strong><span>${k[0].toUpperCase()+k.slice(1)} ${v===1?'record':'records'}</span></div>`).join('');
   $('schema').textContent=[state.result.addedColumns.length?`New columns: ${state.result.addedColumns.join(', ')}.`:'',state.result.removedColumns.length?`Removed columns: ${state.result.removedColumns.join(', ')}.`:''].filter(Boolean).join(' ');
   render();$('results').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
  }catch(e){invalidate();note(e.message);}
@@ -86,7 +86,9 @@ function render(){
   const display=v=>v===undefined?'<span class="muted">No column</span>':v===''?'<span class="muted">Empty</span>':escape(v);
   return `<td>${r.changes.includes(c)?`<del aria-label="Original value">${display(b)}</del><ins aria-label="Updated value">${display(a)}</ins>`:display(r.after?a:b)}</td>`;
  }).join('')}</tr>`).join('');
- $('empty').hidden=!!rows.length;$('page-info').textContent=rows.length?`${state.page*50+1}–${Math.min((state.page+1)*50,rows.length)} of ${rows.length} records`:'0 records';$('prev').disabled=state.page===0;$('next').disabled=state.page>=pages-1;
+ $('empty').hidden=!!rows.length;
+ $('empty').textContent=state.filter==='all'&&!$('search').value&&result.rows.every(r=>r.status==='unchanged')?'No differences found. All records match. Choose Unchanged to review them.':'No records match this view. Try another filter or clear your search.';
+ $('page-info').textContent=rows.length?`${state.page*50+1}–${Math.min((state.page+1)*50,rows.length)} of ${rows.length} records`:'0 records';$('prev').disabled=state.page===0;$('next').disabled=state.page>=pages-1;
 }
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.filter=b.dataset.filter;state.page=0;render();}));$('search').addEventListener('input',()=>{state.page=0;render();});$('prev').addEventListener('click',()=>{state.page--;render();});$('next').addEventListener('click',()=>{state.page++;render();});
 function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
@@ -97,7 +99,7 @@ $('export').addEventListener('click',async()=>{
    const cols=r.changes.length?r.changes:state.result.columns;
    cols.forEach(c=>s.addRow([r.status,r.key,c,r.before?.[c]??'',r.after?.[c]??'']));
   });
-  s.getRow(1).font={bold:true,color:{argb:'FFFFFFFF'}};s.getRow(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2458D3'}};s.columns.forEach((c,i)=>c.width=i<2?20:32);s.views=[{state:'frozen',ySplit:1}];s.autoFilter='A1:E1';
+  s.getRow(1).font={bold:true,color:{argb:'FFFFFFFF'}};s.getRow(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2A2A2A'}};s.columns.forEach((c,i)=>c.width=i<2?20:32);s.views=[{state:'frozen',ySplit:1}];s.autoFilter='A1:E1';
   download(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'sheet-diff-comparison.xlsx');
  }catch(e){note('The report could not be exported. '+e.message);}
 });
