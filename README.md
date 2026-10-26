@@ -2,6 +2,8 @@
 
 [![Tests](https://github.com/VitorRodi/sheet-diff/actions/workflows/test.yml/badge.svg)](https://github.com/VitorRodi/sheet-diff/actions/workflows/test.yml)
 
+[**Try the live demo**](https://vitorrodi.github.io/sheet-diff/)
+
 Compare two Excel or CSV files and see what changed, right in your browser.
 
 Sheet Diff matches records using a shared unique identifier, such as a SKU, code or email. Rows and columns can move between versions without losing the connection between records.
@@ -53,6 +55,10 @@ node verify-export.mjs /path/to/sheet-diff-comparison.xlsx
 ```
 
 The static ExcelJS bundle is committed so the app runs without downloading a library at runtime. After an intentional dependency update, copy `node_modules/exceljs/dist/exceljs.min.js` to `dist/vendor/exceljs.min.js` and retain its license.
+
+## My role
+
+Personal project developed and maintained by Vitor Rodi. My work covers the browser interface, record comparison logic, CSV handling, Excel report generation, tests, and documentation.
 
 ## Engineering decisions
 
