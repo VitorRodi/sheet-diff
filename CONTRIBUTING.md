@@ -9,3 +9,5 @@ Serve `dist/` with a static HTTP server, as described in the README. There is no
 For comparison changes, include focused regression coverage in `tests/core.test.mjs`. For interface changes, check narrow and wide layouts, keyboard access, file selection, the inventory demo, filters, search and Excel export.
 
 Explain the problem and resulting behavior in your pull request. Use synthetic spreadsheet data and retain third-party license notices when updating bundled dependencies.
+
+Use the maintenance issue form for documentation, fixtures, tests or tooling; keep using the existing bug and feature forms for their respective scopes. Search existing issues first. Link a completed issue with `Closes #<number>` in the PR description; use `Refs #<number>` for partial work. GitHub closes the linked issue when the PR merges into the default branch.
