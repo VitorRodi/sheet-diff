@@ -1,6 +1,6 @@
 ## Problem and resulting behavior
 
-Describe the concrete problem, your change and any related issue.
+Describe the concrete problem and the resulting behavior. Link the issue with `Closes #<number>` only when this PR meets all its acceptance criteria; use `Refs #<number>` for partial work.
 
 ## Verification
 
